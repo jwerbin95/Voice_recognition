@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import AudioAnalyser from './AudioAnalyser';
+import Dictaphone from './Dictaphone'
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      audio: null
+      audio: null,
+      message: ''
     };
     this.toggleMicrophone = this.toggleMicrophone.bind(this);
+    this.setMessage = this.setMessage.bind(this)
   }
 
   async getMicrophone() {
@@ -30,18 +33,28 @@ class App extends Component {
       this.getMicrophone();
     }
   }
-  componentDidMount(){
-    this.getMicrophone();
+
+  setMessage(newMessage){
+    this.setState({
+      message: newMessage
+    })
+  }
+  
+  show(){
+    return(
+      <div>
+        <AudioAnalyser audio={this.state.audio} />
+        <Dictaphone toggleMicrophone={this.toggleMicrophone} setMessage={this.setMessage}/>
+      </div>
+    )
   }
   render() {
     return (
       <div className="App">
-        <div className="controls">
-          <button onClick={this.toggleMicrophone}>
-            {this.state.audio ? 'Stop microphone' : 'Get microphone input'}
-          </button>
+        <div class='transcriptContainer'>
+          <span className="transcript">{this.state.message}</span>
         </div>
-        {this.state.audio ? <AudioAnalyser audio={this.state.audio} /> : ''}
+        {this.state.audio ? this.show() : <img className="mic" src="images/microphone.png" onClick={this.toggleMicrophone} />}
       </div>
     );
   }

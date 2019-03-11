@@ -36,6 +36,20 @@ footer {
   color: #fff;
   text-align: center;
 }
-.container {
+.container, .transcriptContainer {
 	text-align: center;
+}
+.transcript{
+  font-size: 3em;
+  color: white;
+}
+.mic{
+	border: solid white;
+	border-radius: 25%;
+	height: 20%;
+	width: 20%;
+	position: relative;
+	transform: translateY(75%);
+	margin-left: 40%;
+	margin-right: 40%;
 }
