@@ -10,13 +10,15 @@ class App extends Component {
       message: '',
       showForm: false,
       command: "",
-      url: ""
+      url: "",
+      commandList: null
     };
     this.toggleMicrophone = this.toggleMicrophone.bind(this);
     this.setMessage = this.setMessage.bind(this)
     this.checkForm = this.checkForm.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.fetchCommands = this.fetchCommands.bind(this)
   }
 
   async getMicrophone() {
@@ -56,7 +58,11 @@ class App extends Component {
     return(
       <div>
         <AudioAnalyser audio={this.state.audio} />
-        <Dictaphone toggleMicrophone={this.toggleMicrophone} setMessage={this.setMessage} checkForm={this.checkForm}/>
+        <Dictaphone 
+          toggleMicrophone={this.toggleMicrophone} 
+          setMessage={this.setMessage} 
+          checkForm={this.checkForm}
+        />
       </div>
     )
   }
@@ -72,6 +78,7 @@ class App extends Component {
     }).then(data=>{
       console.log(data)
       console.log("Sucessfully send post request to API.")
+      this.fetchCommands()
     }).catch(error=>{
       console.log(error.stack)
     })
@@ -82,13 +89,74 @@ class App extends Component {
       [event.target.name]: event.target.value
     })
   }
+  fetchCommands(){
+    fetch("http://localhost:3000/commands").then(data=>{
+          data.json().then(jsonData=>{
+            this.setState({
+              commandList: jsonData
+            })
+          }).catch(error=>{
+            console.log(error.stack)
+          })
+        }).catch(error=>{
+          console.log(error.stack)
+        })
+  }
+  componentDidUpdate(){
+    this.fetchCommands()
+  }
   render() {
+    let list = null
+    if(this.state.commandList!==null){
+      list = this.state.commandList.map(item=>{
+        return (
+          <div role="listitem" class="item">
+            <div class="content">
+              <div class='header'>Say: {item.name} </div>
+              <div>Redirects To: {item.value}</div>
+            </div>
+          </div>
+        )
+      })
+    }
     return (
       <div className="App">
         <div className='transcriptContainer'>
           <span className="transcript">{this.state.message}</span>
         </div>
-        {this.state.audio ? this.show() : <img className="mic" src="images/microphone.png" onClick={this.toggleMicrophone} alt="click to use voice commands"/>}
+        {this.state.commandList!==null ? (
+          <div className='ui inverted segment'>
+            <div className='ui medium header'>Available Commands</div>
+            <div role='list' class="ui divided inverted relaxed list">
+              {list}
+              <div role="listitem" class="item">
+                <div class="content">
+                  <div class='header'>Say: add website </div>
+                  <div>Add A Command</div>
+                </div>
+              </div>
+              <div role="listitem" class="item">
+                <div class="content">
+                  <div class='header'>Say: google (whatever you want to search) </div>
+                  <div>Search Google</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {
+          this.state.audio ? 
+          this.show() : 
+            <div>
+              <div className='ui huge white inverted center aligned header'>Click Microphone To Begin</div>
+              <img 
+                className="mic" 
+                src="images/microphone.png" 
+                onClick={this.toggleMicrophone} 
+                alt="click to use voice commands"
+              />
+            </div>
+        }
         {this.state.showForm ? (
           <form onSubmit={this.handleSubmit} className="ui form">
             <div className="field">

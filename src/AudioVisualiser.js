@@ -28,7 +28,6 @@ class AudioVisualiser extends Component {
       context.beginPath();
       context.strokeStyle=`rgb(0, ${y+40}, ${x+100})`
       context.arc(width/2, height/2, y+40, 0, Math.PI * 2, true)
-      context.stroke()
       x += sliceWidth;
     }
     context.stroke();
@@ -39,6 +38,7 @@ class AudioVisualiser extends Component {
     return (
       <div class="container">
         <canvas width="1000" height="1000" ref={this.canvas} />;
+        <img src="images/microphone.png" className="mic fixedMic" alt="microphone" />
       </div>
     )
   }

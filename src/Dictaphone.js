@@ -11,7 +11,6 @@ const propTypes = {
 
 class Dictaphone extends Component {
   testTranscript(){
-      console.log(this.props.finalTranscript)
       let testScript = this.props.finalTranscript.split(" ")
       if(testScript[0].toLowerCase()==="google"){
         testScript.shift()
@@ -27,6 +26,19 @@ class Dictaphone extends Component {
         this.props.toggleMicrophone()
         this.props.checkForm()
       }
+      else if(testScript[0].toLowerCase()==='remove'){
+        this.props.resetTranscript()
+        testScript.shift()
+        let removeString = testScript.join(" ")
+        console.log(removeString)
+        fetch('http://localhost:3000/remove', {
+          method: 'delete',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            name: removeString
+          })
+        })
+      }
       else{
         fetch("http://localhost:3000/command/"+this.props.finalTranscript.toLowerCase()).then(data=>{
           this.props.resetTranscript()
@@ -34,11 +46,8 @@ class Dictaphone extends Component {
             window.location.assign(jsonData[0].value)
           })
             .catch(error=>{
+              this.props.resetTranscript()
               this.props.toggleMicrophone()
-              this.props.setMessage("Command not found.")
-              setTimeout(function(){
-                this.props.setMessage("")
-              }.bind(this), 3000)
             })
           
         }).catch(error=>{
@@ -47,12 +56,10 @@ class Dictaphone extends Component {
         })
       }
     }
-    componentDidUpdate(){
-      if(this.props.interimTranscript==='' && this.props.finalTranscript!==''){ 
+  render() {
+    if(this.props.interimTranscript==='' && this.props.finalTranscript!=='' && this.props.listening){ 
         this.testTranscript()
       }
-    }
-  render() {
     const { browserSupportsSpeechRecognition, interimTranscript} = this.props
 
     if (!browserSupportsSpeechRecognition) {
@@ -61,7 +68,6 @@ class Dictaphone extends Component {
     return (
       <div className="transcriptContainer">
         <div className="transcript">{interimTranscript}</div>
-        
       </div>
     )
   }
