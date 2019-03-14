@@ -3,15 +3,17 @@ import SpeechRecognition from 'react-speech-recognition'
 import PropTypes from 'prop-types'
 
 const propTypes = {
-  // Props injected by SpeechRecognition
+  // These props are injected by the Speech Recognition component
   transcript: PropTypes.string,
   resetTranscript: PropTypes.func,
   browserSupportsSpeechRecognition: PropTypes.bool
 }
 
 class Dictaphone extends Component {
+  //Tests the transcript when the user speaks, tests localhost:3000 DB against commands
   testTranscript(){
       let testScript = this.props.finalTranscript.split(" ")
+      //Check if spoken input is a google search
       if(testScript[0].toLowerCase()==="google"){
         testScript.shift()
         let urlString = ""
@@ -21,11 +23,13 @@ class Dictaphone extends Component {
         })
         urlString.slice(0, -1)
         window.location.assign(`https://www.google.com/search?ei=EcaHXIXpF8PKswXV8JiQDQ&q=${urlString}&oq=${urlString}&gs_l=psy-ab.3..0l3j0i30l5j0i5i30j0i8i10i30.18609.18983..19185...0.0..0.171.494.2j2......0....1..gws-wiz.......0i71j0i7i30j0i8i7i10i30.L95Y-uyZKpM`)
+      //Tests if spoken input is 'add website'
       }else if(this.props.finalTranscript.toLowerCase()==='add website' ){
         this.props.resetTranscript()
         this.props.toggleMicrophone()
         this.props.checkForm()
       }
+      //Tests if spoken input is 'remove'
       else if(testScript[0].toLowerCase()==='remove'){
         this.props.resetTranscript()
         testScript.shift()
@@ -39,6 +43,7 @@ class Dictaphone extends Component {
           })
         })
       }
+      //Case for all other spoken input
       else{
         fetch("http://localhost:3000/command/"+this.props.finalTranscript.toLowerCase()).then(data=>{
           this.props.resetTranscript()
@@ -57,15 +62,18 @@ class Dictaphone extends Component {
       }
     }
   render() {
+    //Test to see if the user has spoken, without this the render would repeatedly call testTranscript()
     if(this.props.interimTranscript==='' && this.props.finalTranscript!=='' && this.props.listening){ 
         this.testTranscript()
-      }
+    }
+    //Speech recognition props
     const { browserSupportsSpeechRecognition, interimTranscript} = this.props
-
+    //Check if browser supports react-speech-recognition
     if (!browserSupportsSpeechRecognition) {
       return null
     }
     return (
+      //Spoken words displayed
       <div className="transcriptContainer">
         <div className="transcript">{interimTranscript}</div>
       </div>
