@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import AudioVisualiser from './AudioVisualiser';
 
+
+//Parses audio from users voice
 class AudioAnalyser extends Component {
   constructor(props) {
     super(props);

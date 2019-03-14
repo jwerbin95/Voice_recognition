@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
 
+//---------------------------------------------------------------
+//Audio visualizer to visually display voice input
 class AudioVisualiser extends Component {
+
+  //*************************************************************
+  //constructor
   constructor(props) {
     super(props);
     this.canvas = React.createRef();
   }
+  //*************************************************************
 
+  //*************************************************************
+  //redraw canvas upon audio input
   componentDidUpdate() {
     this.draw();
   }
+  //*************************************************************
 
-    draw() {
+  //*************************************************************
+  //Draws audio visualiser to the canvas
+  draw() {
     const { audioData } = this.props;
     const canvas = this.canvas.current;
     const height = canvas.height;
@@ -32,8 +43,10 @@ class AudioVisualiser extends Component {
     }
     context.stroke();
   }
+  //*************************************************************
 
-
+  //*************************************************************
+  //Render
   render() {
     return (
       <div class="container">
@@ -42,6 +55,8 @@ class AudioVisualiser extends Component {
       </div>
     )
   }
+  //*************************************************************
 }
+//---------------------------------------------------------------
 
 export default AudioVisualiser;

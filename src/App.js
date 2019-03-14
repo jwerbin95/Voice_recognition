@@ -3,24 +3,27 @@ import AudioAnalyser from './AudioAnalyser';
 import Dictaphone from './Dictaphone'
 
 class App extends Component {
+  //*************************************************************
+  //Constructor
   constructor(props) {
     super(props);
     this.state = {
       audio: null,
-      message: '',
       showForm: false,
       command: "",
       url: "",
       commandList: null
     };
     this.toggleMicrophone = this.toggleMicrophone.bind(this);
-    this.setMessage = this.setMessage.bind(this)
     this.checkForm = this.checkForm.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.fetchCommands = this.fetchCommands.bind(this)
   }
+  //*************************************************************
 
+  //*************************************************************
+  //Creates audio stream from users microphone
   async getMicrophone() {
     const audio = await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -28,12 +31,18 @@ class App extends Component {
     });
     this.setState({ audio });
   }
+  //*************************************************************
 
+  //*************************************************************
+  //stops the audio stream
   stopMicrophone() {
     this.state.audio.getTracks().forEach(track => track.stop());
     this.setState({ audio: null });
   }
+  //*************************************************************
 
+  //*************************************************************
+  //toggles audio input on and off
   toggleMicrophone() {
     if (this.state.audio) {
       this.stopMicrophone();
@@ -41,19 +50,19 @@ class App extends Component {
       this.getMicrophone();
     }
   }
+  //*************************************************************
 
-  setMessage(newMessage){
-    this.setState({
-      message: newMessage
-    })
-  }
-
+  //*************************************************************
+  //displays the 'add website' form if showForm is true
   checkForm(){
     this.setState({
       showForm: true
     })
   }
-  
+  //*************************************************************
+
+  //*************************************************************
+  //shows the audio visualizer and starts the voice recognition
   show(){
     return(
       <div>
@@ -66,6 +75,10 @@ class App extends Component {
       </div>
     )
   }
+  //*************************************************************
+
+  //*************************************************************
+  //form submit
   handleSubmit(event){
     event.preventDefault()
     fetch("http://localhost:3000/command", {
@@ -83,12 +96,20 @@ class App extends Component {
       console.log(error.stack)
     })
   }
+  //*************************************************************
+
+  //*************************************************************
+  //handle form state changes
   handleChange(event){
     event.preventDefault()
     this.setState({
       [event.target.name]: event.target.value
     })
   }
+  //*************************************************************
+
+  //*************************************************************
+  //fetch the list of commands from the database 
   fetchCommands(){
     fetch("http://localhost:3000/commands").then(data=>{
           data.json().then(jsonData=>{
@@ -102,9 +123,17 @@ class App extends Component {
           console.log(error.stack)
         })
   }
+  //*************************************************************
+
+  //*************************************************************
+  //rerender the list of commands upon updating state
   componentDidUpdate(){
     this.fetchCommands()
   }
+  //*************************************************************
+
+  //*************************************************************
+  //Render
   render() {
     let list = null
     if(this.state.commandList!==null){
@@ -174,5 +203,6 @@ class App extends Component {
     );
   }
 }
+//*************************************************************
 
 export default App;

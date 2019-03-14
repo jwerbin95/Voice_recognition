@@ -2,14 +2,19 @@ import React, { Component } from 'react'
 import SpeechRecognition from 'react-speech-recognition'
 import PropTypes from 'prop-types'
 
+//****************************************************************************
+// These props are injected by the Speech Recognition component
 const propTypes = {
-  // These props are injected by the Speech Recognition component
   transcript: PropTypes.string,
   resetTranscript: PropTypes.func,
   browserSupportsSpeechRecognition: PropTypes.bool
 }
+//****************************************************************************
 
+//****************************************************************************
+//Speech Recognition Component
 class Dictaphone extends Component {
+  //****************************************************************************
   //Tests the transcript when the user speaks, tests localhost:3000 DB against commands
   testTranscript(){
       let testScript = this.props.finalTranscript.split(" ")
@@ -61,6 +66,10 @@ class Dictaphone extends Component {
         })
       }
     }
+  //****************************************************************************
+
+  //****************************************************************************
+  //Render
   render() {
     //Test to see if the user has spoken, without this the render would repeatedly call testTranscript()
     if(this.props.interimTranscript==='' && this.props.finalTranscript!=='' && this.props.listening){ 
@@ -79,6 +88,7 @@ class Dictaphone extends Component {
       </div>
     )
   }
+  //****************************************************************************
 }
 
 Dictaphone.propTypes = propTypes
